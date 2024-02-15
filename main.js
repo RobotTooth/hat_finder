@@ -8,8 +8,8 @@ const pathCharacter = '*';
 class Field {
     constructor(gameTable) {
         this.gameTable = gameTable;
-        this.rowIndex = 0;
-        this.colIndex= 0;
+        this.rowIndex = 2;
+        this.colIndex= 2;
     }
 
     getRowLength() {
