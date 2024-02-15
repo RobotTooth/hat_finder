@@ -10,6 +10,7 @@ class Field {
         this.gameTable = gameTable;
         this.rowIndex = 0;
         this.colIndex= 0;
+
     }
 
     getRowLength() {
@@ -28,18 +29,17 @@ class Field {
 }
 
 const runGame = () => {
-        
-    const myField = new Field([
-        ['*', '░', 'O'],
-        ['░', 'O', '░'],
-        ['░', '^', '░'],
-    ]);
+    
     const rowLength = myField.getRowLength() - 1;
     let colLength = myField.getColLength() -1;
 
     myField.printCurrentField();
+    do {
+
+    //get user input
     let userInput = prompt('Which direction would you like to move: u, d, l, or r? : ');
     
+    //allocate field location based on user input result
     switch(userInput) {
         case 'u': 
             if(myField.rowIndex != 0) {
@@ -65,9 +65,33 @@ const runGame = () => {
             userInput = prompt('You have not made a valid selection! Please select: u, d, l, or r :');
     }
 
+    //update user position and print new table or display win/loose status
+    if(myField.gameTable[myField.rowIndex][myField.colIndex] === hole)
+    {
+        console.log('You have fallen down a hole, Game Over!');
+        break;
+    }
+    else if (myField.gameTable[myField.rowIndex][myField.colIndex] === hat) 
+    {
+        console.log('You found the hat, You Win!');
+        break;
+    }
+        
+    else {
+        myField.gameTable[myField.rowIndex][myField.colIndex] = pathCharacter;
+        console.clear();
+        myField.printCurrentField();
+    }
+}
+
+while (myField.gameTable[myField.rowIndex][myField.colIndex] != hole || myField.gameTable[myField.rowIndex][myField.colIndex] != hat);
 
 };
 
-
+const myField = new Field([
+    ['*', '░', 'O'],
+    ['░', 'O', '░'],
+    ['░', '^', '░'],
+]);
 
 runGame();
