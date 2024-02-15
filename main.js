@@ -8,8 +8,8 @@ const pathCharacter = '*';
 class Field {
     constructor(gameTable) {
         this.gameTable = gameTable;
-        this.rowIndex = 2;
-        this.colIndex= 2;
+        this.rowIndex = 0;
+        this.colIndex= 0;
     }
 
     getRowLength() {
@@ -36,8 +36,6 @@ const runGame = () => {
     ]);
     const rowLength = myField.getRowLength() - 1;
     let colLength = myField.getColLength() -1;
-
-    console.log(colLength);
 
     myField.printCurrentField();
     let userInput = prompt('Which direction would you like to move: u, d, l, or r? : ');
@@ -67,8 +65,6 @@ const runGame = () => {
             userInput = prompt('You have not made a valid selection! Please select: u, d, l, or r :');
     }
 
-    console.log(myField.rowIndex);
-    console.log(myField.colIndex);
 
 };
 
