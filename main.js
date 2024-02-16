@@ -10,7 +10,6 @@ class Field {
         this.gameTable = gameTable;
         this.rowIndex = 0;
         this.colIndex= 0;
-
     }
 
     getRowLength() {
@@ -24,6 +23,44 @@ class Field {
     printCurrentField() {
         for(let square of this.gameTable) {
             console.log(square.join(''));
+        }
+    }
+
+    static fieldGenerator(rows, cols, percentage) {
+        let area = rows*cols;
+        let numOfHoles = Math.floor(area*(percentage/100));
+        let fieldArray = [];
+
+        while(numOfHoles > 0){
+            for (let i = 0; i < rows; i++) {
+                let innerArray = [];
+                for(let j = 0; j < cols; j++) {
+                    const numHolesPerRow = math.floor(Math.random()*cols);
+                    innerArray.push(fieldCharacter);
+                    for(let k = 0; k < numHolesPerRow; k++) {
+                        let holesArray = [];
+                        const randomIndices = [];
+                        holesArray.push(hole);
+                                              
+                        while(randomIndices.length < numHolesPerRow) {
+                            const randomIndex = Math.floor(Math.random()*innerArray);
+                            if (!randomIndices.includes(randomIndex)) {
+                                randomIndices.push(randomIndex);
+                            }
+                        }
+
+                        randomIndices.forEach(index => {innerArray[index] = holesArray[Math.floor(Math.random().holesArray.length)]});
+
+                        numOfHoles--;                        
+                    }                  
+                }
+
+                fieldArray.push(innerArray);
+                fieldArray[0][0] = pathCharacter;
+
+                const hatLocation = [Math.floor(Math.random()*area)][Math.floor(Math.random()*area)];
+                if(!)
+            }
         }
     }
 }
