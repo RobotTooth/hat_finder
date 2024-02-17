@@ -27,41 +27,46 @@ class Field {
     }
 
     static fieldGenerator(rows, cols, percentage) {
-        let area = rows*cols;
-        let numOfHoles = Math.floor(area*(percentage/100));
+        let area = rows * cols;
+        let numOfHoles = Math.floor(area * (percentage / 100));
         let fieldArray = [];
-
-        while(numOfHoles > 0){
-            for (let i = 0; i < rows; i++) {
-                let innerArray = [];
-                for(let j = 0; j < cols; j++) {
-                    const numHolesPerRow = math.floor(Math.random()*cols);
-                    innerArray.push(fieldCharacter);
-                    for(let k = 0; k < numHolesPerRow; k++) {
-                        let holesArray = [];
-                        const randomIndices = [];
-                        holesArray.push(hole);
-                                              
-                        while(randomIndices.length < numHolesPerRow) {
-                            const randomIndex = Math.floor(Math.random()*innerArray);
-                            if (!randomIndices.includes(randomIndex)) {
-                                randomIndices.push(randomIndex);
-                            }
-                        }
-
-                        randomIndices.forEach(index => {innerArray[index] = holesArray[Math.floor(Math.random().holesArray.length)]});
-
-                        numOfHoles--;                        
-                    }                  
-                }
-
-                fieldArray.push(innerArray);
-                fieldArray[0][0] = pathCharacter;
-
-                const hatLocation = [Math.floor(Math.random()*area)][Math.floor(Math.random()*area)];
-                if(!)
+    
+        // Generate the field array with fieldCharacter
+        for (let i = 0; i < rows; i++) {
+            let innerArray = [];
+            for (let j = 0; j < cols; j++) {
+                innerArray.push(fieldCharacter);
+            }
+            fieldArray.push(innerArray);
+        }
+    
+        // Randomly allocate holes
+        while (numOfHoles > 0) {
+            const randomRowIndex = Math.floor(Math.random() * rows);
+            const randomColIndex = Math.floor(Math.random() * cols);
+    
+            if (fieldArray[randomRowIndex][randomColIndex] !== hole &&
+                fieldArray[randomRowIndex][randomColIndex] !== pathCharacter) {
+                fieldArray[randomRowIndex][randomColIndex] = hole;
+                numOfHoles--;
             }
         }
+    
+        // Randomly allocate the starting position and hat position
+        let hatRow, hatCol, startRow, startCol;
+        do {
+            hatRow = Math.floor(Math.random() * rows);
+            hatCol = Math.floor(Math.random() * cols);
+            startRow = Math.floor(Math.random() * rows);
+            startCol = Math.floor(Math.random() * cols);
+        } while ((hatRow === startRow && hatCol === startCol) || 
+                 (fieldArray[startRow][startCol] === hole));
+    
+        // Set the starting position and hat position
+        fieldArray[startRow][startCol] = pathCharacter;
+        fieldArray[hatRow][hatCol] = hat;
+    
+        return fieldArray;
     }
 }
 
@@ -75,37 +80,39 @@ const getUserInput = () => {
 };
 
 // function to update field location based on user input
-const updateField = (direction) => {
+const updateField = (direction, myField) => { // Add myField parameter
     const rowLength = myField.getRowLength() - 1;
-    let colLength = myField.getColLength() -1;
+    const colLength = myField.getColLength() - 1;
 
+    // Calculate the new position based on the direction
+    let newRow = myField.rowIndex;
+    let newCol = myField.colIndex;
     switch(direction) {
         case 'u': 
-            if(myField.rowIndex != 0) {
-                myField.rowIndex -= 1;
-            }
+            newRow = Math.max(0, myField.rowIndex - 1);
             break;
         case 'd':
-            if(myField.rowIndex != rowLength) {
-                myField.rowIndex += 1;
-            }
+            newRow = Math.min(rowLength, myField.rowIndex + 1);
             break;
         case 'l':
-            if(myField.colIndex != 0) {
-                myField.colIndex -= 1;
-            }
+            newCol = Math.max(0, myField.colIndex - 1);
             break;
         case 'r':
-            if(myField.colIndex != colLength) {
-                myField.colIndex += 1;
-            }
+            newCol = Math.min(colLength, myField.colIndex + 1);
             break;
-        }
+    }
+
+    // Check if the new position is valid
+    if (myField.gameTable[newRow][newCol] !== hole) {
+        // Update the position if valid
+        myField.rowIndex = newRow;
+        myField.colIndex = newCol;
+    }
 };
 
 // function to check game status
 
-const checkGameStatus = () => {
+const checkGameStatus = (myField) => {
     if (myField.gameTable[myField.rowIndex][myField.colIndex] === hole) {
         console.log('You have fallen down a hole, Game Over!');
         return true;
@@ -118,13 +125,21 @@ const checkGameStatus = () => {
 
 // function to run the game
 const runGame = () => {
+    // Generate the field array
+    const fieldArray = Field.fieldGenerator(50, 30, 30);
+    // Create a new Field object
+    const myField = new Field(fieldArray);
+    // Set the starting position as the current position of the path character
+    myField.rowIndex = myField.gameTable.findIndex(row => row.includes(pathCharacter));
+    myField.colIndex = myField.gameTable[myField.rowIndex].indexOf(pathCharacter);
+    
     myField.printCurrentField();
 
     do {
         const userInput = getUserInput();
-        updateField(userInput);
+        updateField(userInput, myField); // Pass myField to updateField
 
-        if (checkGameStatus()) {
+        if (checkGameStatus(myField)) {
             break;
         }
 
@@ -195,11 +210,5 @@ const runGame = () => {
 // while (myField.gameTable[myField.rowIndex][myField.colIndex] != hole || myField.gameTable[myField.rowIndex][myField.colIndex] != hat);
 
 // };
-
-const myField = new Field([
-    ['*', '░', 'O'],
-    ['░', 'O', '░'],
-    ['░', '^', '░'],
-]);
 
 runGame();
